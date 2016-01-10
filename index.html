@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hanmlet</title>
+    <link rel="stylesheet" href="assets/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="assets/hanmlet.css" type="text/css" />
+</head>
+<body>
+<!-- アプリ本体。 -->
+<nav id="header" class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a href="#" class="navbar-brand brand-logo">HANMLET <i class="brand-logo-ver">&beta;</i></a>
+    </div>
+  </div>
+</nav>
+
+<div id="main" class="container">
+    <div class="row">
+    <form name="form0" class="form-inline">
+      <div class="form-group">
+        <label for="form0-isbn13-input" class="sr-only">ISBN / URL in amazon:</label>
+        <div class="input-group">
+          <input id="form0-isbn13-input" name="isbn13" class="form-control" size="40" required="required" pattern="[ ¥r¥n¥t](*[0-9¥-]{10,}[0-9X])|(https?://.*)[ ¥r¥n¥t]*" value="" placeholder="ISBN / URL in amazon"/>
+          <!-- 13桁のISBNの適当な正規表現の簡易実装。-->
+          <div class="input-group-btn">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-right">
+              <!-- クローヴィス物語：出版Imprintと発行Publisherが両方入っている。 -->
+              <li><a href="javascript:(function() { document.getElementById('form0-isbn13-input').value = '978-4-560-07199-1'; }())">サンプル1</a></li>
+              <!-- 鷲の巣：発行日情報があるが、中身が空。価格情報なし。 -->
+              <li><a href="javascript:(function() { document.getElementById('form0-isbn13-input').value = '978-4892571138'; }())">サンプル2</a></li>
+              <!-- ポケットマスターピース01 カフカ：発行日のdateformat属性がない。 -->
+              <li><a href="javascript:(function() { document.getElementById('form0-isbn13-input').value = '978-4087610345'; }())">サンプル3</a></li>
+              <!-- 世界の誕生日 &times; AmazonのURL： -->
+              <li><a href="javascript:(function() { document.getElementById('form0-isbn13-input').value = 'http://www.amazon.co.jp/%E4%B8%96%E7%95%8C%E3%81%AE%E8%AA%95%E7%94%9F%E6%97%A5-%E3%83%8F%E3%83%A4%E3%82%AB%E3%83%AF%E6%96%87%E5%BA%AB-SF-1-11-%E3%83%8F%E3%83%A4%E3%82%AB%E3%83%AF%E6%96%87%E5%BA%ABSF/dp/4150120374/ref='; }())">サンプル4</a></li>
+            </ul>
+          </div>
+        </div>
+        <!-- ¥s がChromeで効かなかったため [ ¥r¥n¥t] で代用。 -->
+        <div style="display: none">
+          <label><input name="useOriginalImage" type="checkbox" checked="checked" />原寸大画像を使う</label> <small>※現在、縮小済み画像が取得できない場合が多いため、デフォルトでONにしています。</small><br/>  
+        </div>
+        <button type="submit" class="btn btn-default">生成</button>
+      </div>
+      <br />
+      <div class="form-group">
+        <div class="input-group">
+          <input id="form0-use-custom-template" name="useCustomTemplate" type="checkbox" autocomplete="off" />
+          <label for="form0-use-custom-template">テンプレートを指定</label>    
+        </div>
+        <div id="template-area" style="display: none">
+          <textarea id="form0-custom-template" name="customTemplate" class="form-control" rows="20" cols="80"></textarea>
+          <p>{{...}}と{{{...}}}の部分が実際の値に置き換わります。</p>    
+        </div>
+      </div>
+    </form>
+    </div>
+    
+    <hr/>
+    
+    <div class="row" style="text-align: right; margin: 4px 0 20px 0;">
+    <input id="copy-to-clipboard-button" class="btn btn-primary btn-sm" type="button"
+           data-clipboard-action="copy" data-clipboard-target="#source"
+           value="クリップボードにコピー"/>
+    </div>
+    
+    <div class="row">
+      <label>プレビュー：</label><br />
+      <div id="entry-container" style="border: solid 1px #CCC; padding: 8px; min-height: 40px;"></div>
+    </div>
+    
+    <div class="row" style="margin-top: 12px">
+      <label for="source">HTMLソース：</label><br/>
+      <textarea class="form-control" readonly="readonly" id="source" rows="5" cols="80"></textarea>
+    </div>
+</div>
+
+<hr />
+
+<footer id="footer" class="footer">
+  <div class="container">
+    <p class="text-muted">
+      書影および書誌情報は<a target="_blank" href="http://hanmoto.com/">版元ドットコム</a>のデータを利用しています。
+      <a href="./about.html"><br />
+      このサイトについて</a>
+    </p>
+  </div>
+</footer>
+
+<!-- Load assets -->
+<script src="./assets/jquery.min.js"></script>
+<script src="./assets/bootstrap.min.js"></script>
+<script src="./assets/clipboard.min.js"></script>
+<script src="./assets/handlebars.min.js"></script>
+<script src="./assets/Sanitize.min.js"></script>
+
+<!-- 記事のテンプレート。 {{変数名（プレーンテキスト）}} および {{{変数名（HTML)}}}の部分が置き換わる。 -->
+<script id="entry-template" type="text/x-handlebars-template">
+<div>
+  <a href="{{pageUrl}}" target="_blank" title="版元ドットコムの詳細ページを開く"><img style="border:none;" src="{{thumbnailUrl}}" alt="書影"></a>
+</div>
+
+<div>
+  書名：{{title}}<br />
+  著者：{{author}}<br />
+  出版：{{imprint}}<br />
+  <!-- 発行：{{publisher}}<br /> -->
+  発売日：{{pubDate}}<br />
+  価格：{{price}}<br />
+  内容紹介：<br />
+  {{{description}}}
+</div>
+</script>
+
+<script src="./assets/hanmlet.js"></script>
+
+</body>
+</html>
