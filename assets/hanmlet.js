@@ -394,14 +394,15 @@ function getAsin(url) {
 function convertToIsbn13(isbn10) {
     var tmp0 = isbn10.substring(0, 9), //ISBN-10のチェックディジットを除去。
         tmp1 = '978' + tmp0, //固定の接頭記号をつける。
-        cd = computeIsbnCheckDigit(tmp1), //あらためてチェックディジットを計算。
+        cd = computeIsbnCheckDigit(tmp1, false), //あらためてチェックディジットを計算。
         isbn13 = tmp1 + cd; //チェックディジットを付加。
+    console.log(isbn10 + ' => ' + isbn13);
     
     return isbn13;
 }
 
 /* ISBNのチェックディジットを計算。*/
-function computeIsbnCheckDigit(isbn) {
+function computeIsbnCheckDigit(isbn, Xor0) {
     var i, d, sum;
     
     sum = 0;
@@ -417,7 +418,7 @@ function computeIsbnCheckDigit(isbn) {
     return fromDigit(10 - (sum % 10));
     
     function toDigit(char) {
-        if (char !== 'X') {
+        if (char !== 'X' || char !== '0') {
             return parseInt(char, 10);
         } else {
             return 10;
@@ -428,7 +429,7 @@ function computeIsbnCheckDigit(isbn) {
         if (d !== 10) {
             return d.toString(10);
         } else {
-            return 'X';
+            return (Xor0? 'X' : '0');
         }
     }
 }
