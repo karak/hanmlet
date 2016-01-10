@@ -75,6 +75,16 @@ function render() {
         pageUrl,
         thumbnailUrl;
 
+  //リセット。  
+  $('#error-messages').html('');
+  $('#entry-container').html('読み込み中...');
+  $('#source').val('');
+    
+  if (inputIsbn === '') {
+    $('#entry-container').html('');
+    return;
+  }
+
   if (inputIsbn.match(amazonUrlPattern)) {
     //Case: Amazon URL
     isbn = convertToIsbn13(getAsin(inputIsbn));
@@ -86,18 +96,20 @@ function render() {
     } else if (inputIsbn.length === 10) {
       isbn = convertToIsbn13(inputIsbn);
     } else {
-      alert("ISBNは13桁か10桁で入力してください（ハイフン可）。");
+      $('#error-messages').html('ISBNは13桁か10桁で入力してください（ハイフン可）。');
+      return;
     }
   }
-  console.log(isbn);
+  
   //この時点で13桁のみ対応
-  if (isbn.length !== 13) {
+  if (isbn.length !== 13 || !isbn.match(/[0-9]{12}[0-9X]/)) {
+    $('#error-messages').html('ISBNの書式が正しくありません');
     return;
   }
   
   //めんどいので日本の書籍のみ対応
   if (isbn.substring(0, 4) !== '9784') {
-    alert("ISBNの冒頭は(978)4である必要があります。");
+    $('#error-messages').html('ISBNの冒頭は9784（13桁）または4（13桁）である必要があります。');
     return;
   }
   
