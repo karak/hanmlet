@@ -36,11 +36,17 @@
               <li><a href="javascript:(function() { document.getElementById('form0-isbn13-input').value = '978-4892571138'; }())">サンプル2</a></li>
               <!-- ポケットマスターピース01 カフカ：発行日のdateformat属性がない。 -->
               <li><a href="javascript:(function() { document.getElementById('form0-isbn13-input').value = '978-4087610345'; }())">サンプル3</a></li>
-              <!-- 世界の誕生日 &times; AmazonのURL： -->
+              <!-- 世界の誕生日 &times; AmazonのURL(dp/NNNNNNNNNN形式： -->
               <li><a href="javascript:(function() { document.getElementById('form0-isbn13-input').value = 'http://www.amazon.co.jp/%E4%B8%96%E7%95%8C%E3%81%AE%E8%AA%95%E7%94%9F%E6%97%A5-%E3%83%8F%E3%83%A4%E3%82%AB%E3%83%AF%E6%96%87%E5%BA%AB-SF-1-11-%E3%83%8F%E3%83%A4%E3%82%AB%E3%83%AF%E6%96%87%E5%BA%ABSF/dp/4150120374/ref='; }())">サンプル4</a></li>
+              <!-- ウィザード &times; AmazonのURL(/gp/product/NNNNNNNNNN形式)： -->
+              <li><a href="javascript:(function() { document.getElementById('form0-isbn13-input').value = 'http://www.amazon.co.jp/gp/product/433605956X/ref='; }())">サンプル5</a></li>
             </ul>
           </div>
         </div>
+        <div class="form-group">
+          <div id="error-messages"></div>
+        </div>
+
         <!-- ¥s がChromeで効かなかったため [ ¥r¥n¥t] で代用。 -->
         <div style="display: none">
           <label><input name="useOriginalImage" type="checkbox" checked="checked" />原寸大画像を使う</label> <small>※現在、縮小済み画像が取得できない場合が多いため、デフォルトでONにしています。</small><br/>  

@@ -10,9 +10,14 @@ var templateSource, template, sanitizeHtml;
 /* app                                 */
 /***************************************/
 //form handler
-document.forms.form0.onsubmit = function () {
-  render();
-  return false;
+document.forms.form0.onsubmit = function (e) {
+  e.preventDefault();
+  
+  try {
+    render();
+  } finally {
+    return false;
+  }
 };
 
 //入力エリア
@@ -386,8 +391,10 @@ function computePublisherCodeLength(isbn) {
 
 //! AmazonのURLからASINを取得する。
 function getAsin(url) {
-  var pattern = new RegExp('^https?://www.amazon.co.jp.*?/dp/([0-9X]*)/?.*'),
-      asin = url.match(pattern)[1];
+  var pattern1 = new RegExp('^https?://www.amazon.co.jp.*?/dp/([0-9X]*)/?.*'),
+      pattern2 = new RegExp('^https?://www.amazon.co.jp.*?/gp/product/([0-9X]*)/?.*'),
+      match = (url.match(pattern1) || url.match(pattern2)),
+      asin = match !== null? match[1] : '';
   return asin;
 }
 
